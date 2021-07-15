@@ -66,7 +66,7 @@ class AdaptiveOptics(gym.Env):
         next_state = next_state.astype(np.uint8)
         reward = np.sum(next_state) ** 2/np.sum(next_state ** 2)
         reward -= reward
-        reward+=1000
+
 
         x = next_state.reshape(1, 128, 128)
         self.__counter += 1
