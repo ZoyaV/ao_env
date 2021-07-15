@@ -42,7 +42,7 @@ class AdaptiveOptics(gym.Env):
             self.data_loaded = yaml.safe_load(stream)
 
         self.action_space = spaces.Box(-2, 2, shape=(32,))
-        self.observation_space = spaces.Box(0, 1, shape=(128, 128), dtype=np.float32)
+        self.observation_space = spaces.Box(0, 1, shape=(3,128, 128), dtype=np.float32)
         self._initao()
 
     def _initao(self):
