@@ -50,9 +50,9 @@ class AdaptiveOptics(gym.Env):
         self.sim = soapy.Sim(self.conf_file)
         self.sim.aoinit()
         self.sim.makeIMat()
-        
-        self.step()
-        self.step()
+
+        self.step(self.expert())
+        self.step(self.expert())
 
     def expert(self):
         if self.sim.config.sim.nDM:
