@@ -40,7 +40,7 @@ class AdaptiveOptics(gym.Env):
             self.conf_file = sys.path[-1]+"/sh_8x8.yaml"
         with open(self.conf_file, 'r') as stream:
             self.data_loaded = yaml.safe_load(stream)
-
+        self.__counter = 0
         self.action_space = spaces.Box(-2, 2, shape=(32,))
         self.observation_space = spaces.Box(0, 255, shape=(128, 128,3), dtype=np.uint8)
         self._initao()
@@ -66,8 +66,14 @@ class AdaptiveOptics(gym.Env):
         next_state = next_state.astype(np.uint8)
         reward = np.sum(next_state ** 2)/np.sum(next_state) ** 2
         reward*=100000
-        x = next_state.reshape(1, 128,128)
-        return np.vstack([x,x,x]).T, reward, False, {}
+        x = next_state.reshape(1, 128, 128)
+        self.__counter += 1
+        if self.__counter == 100:
+            return np.vstack([x, x, x]).T, reward, True, {}
+        else:
+            return np.vstack([x, x, x]).T, reward, False, {}
+
+
 
     def reset(self):
         self._initao()
