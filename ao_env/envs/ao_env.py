@@ -10,6 +10,7 @@ import pip
 import sys
 import soapy
 
+
 def loopFrame(sim, new_commands):
 
     t = time.time()
@@ -40,11 +41,15 @@ class AdaptiveOptics(gym.Env):
         with open(self.conf_file, 'r') as stream:
             self.data_loaded = yaml.safe_load(stream)
 
-        self.action_space = spaces.Box(0, 1, shape=(32,))
-        self.observation_space = spaces.Box(-1, 1, shape=(64, 64), dtype=np.float32)
+        self.action_space = spaces.Box(-2, 2, shape=(32,))
+        self.observation_space = spaces.Box(0, 1, shape=(64, 64), dtype=np.float32)
+        self._initao()
 
-    def seed(self):
-        pass
+    def _initao(self):
+        self.data_loaded['Atmosphere']['windDirs'] = np.random.randint(0, 180, 4).tolist()
+        self.sim = soapy.Sim(self.conf_file)
+        self.sim.aoinit()
+        self.sim.makeIMat()
 
     def expert(self):
         if self.sim.config.sim.nDM:
@@ -54,18 +59,16 @@ class AdaptiveOptics(gym.Env):
 
     def step(self, action):
         loopFrame(self.sim, action)
-        next_state = self.sim.sciImgs[0].copy()
+        next_state = self.sim.sciImgs[0].copy() / (np.max(self.sim.sciImgs[0]))
         reward = np.sum(next_state) ** 2 / np.sum(next_state ** 2)
         return next_state, reward, False, {}
 
     def reset(self):
-        pass
+        self._initao()
 
     def render(self):
-        self.data_loaded['Atmosphere']['windDirs'] = np.random.randint(0, 180, 4).tolist()
-        self.sim = soapy.Sim(self.conf_file)
-        self.sim.aoinit()
-        self.sim.makeIMat()
+        plt.imshow(self.sim.sciImgs[0])
+        plt.show()
 
     def close(self):
         pass
