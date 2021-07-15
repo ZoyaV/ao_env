@@ -64,10 +64,9 @@ class AdaptiveOptics(gym.Env):
         loopFrame(self.sim, action)
         next_state = self.sim.sciImgs[0].copy() / (np.max(self.sim.sciImgs[0])) * 255
         next_state = next_state.astype(np.uint8)
-        reward = np.sum(next_state) ** 2/np.sum(next_state ** 2)
-        reward -= reward
-
-
+        reward = np.sum(next_state ** 2)/np.sum(next_state) ** 2
+        reward*=100000
+        reward = np.e*reward
         x = next_state.reshape(1, 128, 128)
         self.__counter += 1
         if self.__counter == 100:
