@@ -68,11 +68,11 @@ Science:
     position: [0, 0]
     FOV: 1.0
     wavelength: 1.65e-6
-    pxls: 64
+    pxls: 128
     
 
   1:
     position: [13, 20]
     FOV: 0.9
     wavelength: 1.65e-6
-    pxls: 64
+    pxls: 128
