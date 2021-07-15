@@ -69,7 +69,7 @@ class AdaptiveOptics(gym.Env):
 
     def reset(self):
         self._initao()
-        return self.sim.sciImgs[0].copy()
+        return self.step(self.expert())[0]
 
     def render(self):
         plt.imshow(self.sim.sciImgs[0])
