@@ -41,9 +41,10 @@ class AdaptiveOptics(gym.Env):
         with open(self.conf_file, 'r') as stream:
             self.data_loaded = yaml.safe_load(stream)
         self.__counter = 0
+        self.mem_img = []
 
         self.action_space = spaces.Box(-2, 2, shape=(32,))
-        self.observation_space = spaces.Box(0, 255, shape=(128, 128,1), dtype=np.uint8)
+        self.observation_space = spaces.Box(0, 255, shape=(128, 128,3), dtype=np.uint8)
         self._initao()
 
     def _initao(self):
@@ -66,15 +67,18 @@ class AdaptiveOptics(gym.Env):
         img = self.sim.sciImgs[0].copy()
         next_state = ((img - np.min(img)) / (np.max(img) - np.min(img)) )* 255
         next_state = next_state.astype(np.uint8)
+
         reward = np.sum(next_state ** 2)/np.sum(next_state) ** 2
         reward*=10000
 
         if reward > 0.05:
             reward*=2
         #reward = reward
-        x = next_state.reshape(128, 128, 1)
+        x = next_state.reshape(1, 128, 128)
+        self.mem_img.append(x)
+        self.mem_img = next_state[-3:]
         self.__counter += 1
-        return x, reward, False, {}
+        return np.vstack(self.mem_img).T, reward, False, {}
 
 
 
