@@ -54,7 +54,7 @@ class AdaptiveOptics(gym.Env):
         self.sim.aoinit()
         self.sim.makeIMat()
 
-        state = []
+        self.mem_img = []
         for i in range(3):
             expert_value = self.expert()
             loopFrame(self.sim, expert_value)
@@ -62,10 +62,10 @@ class AdaptiveOptics(gym.Env):
             img = ((img - np.min(img)) / (np.max(img) - np.min(img))) * 255
             img = img.astype(np.uint8)
             img = img.reshape(1, 128, 128)
-            state.append(img)
+            self.mem_img.append(img)
         self.pre_expert_value = self.expert()
 
-        return np.vstack(state).T
+        return np.vstack(self.mem_img).T
 
 
     def expert(self):
