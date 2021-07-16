@@ -61,7 +61,7 @@ class AdaptiveOptics(gym.Env):
             img = self.sim.sciImgs[0].copy()
             img = ((img - np.min(img)) / (np.max(img) - np.min(img))) * 255
             img = img.astype(np.uint8)
-            img = img.reshape( 128, 128, 1)
+            img = img.reshape(1, 128, 128)
             state.append(img)
         self.pre_expert_value = self.expert()
 
