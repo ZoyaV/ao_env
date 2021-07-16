@@ -41,6 +41,8 @@ class AdaptiveOptics(gym.Env):
         with open(self.conf_file, 'r') as stream:
             self.data_loaded = yaml.safe_load(stream)
         self.__counter = 0
+        self.last_reward = -1000
+        self.reward = 0
         self.mem_img = []
         self.expert_commands = []
         self.action_space = spaces.Box(-2, 2, shape=(32,))
@@ -75,7 +77,7 @@ class AdaptiveOptics(gym.Env):
         return commands
 
     def step(self, action):
-        loopFrame(self.sim, action)
+        loopFrame(self.sim, self.pre_expert_value)
         expert_value = self.expert()
         img = self.sim.sciImgs[0].copy()
         next_state = ((img - np.min(img)) / (np.max(img) - np.min(img)) )* 255
@@ -88,8 +90,10 @@ class AdaptiveOptics(gym.Env):
 
         if  isinstance(self.pre_expert_value, type(None)):
             self.pre_expert_value = expert_value
+        self.last_reward = self.reward
         reward = -np.mean((action - self.pre_expert_value)**2)
         reward = - reward
+        self.reward = reward
 
         self.__counter += 1
         self.pre_expert_value = expert_value
