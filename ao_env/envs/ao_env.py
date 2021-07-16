@@ -75,6 +75,8 @@ class AdaptiveOptics(gym.Env):
         state = self.mem_img[:3]
         self.mem_img = next_state[-3:]
 
+        if  self.pre_expert_value == None:
+            self.pre_expert_value = expert_value
         reward = (action - self.pre_expert_value)**2
         reward = - reward
 
