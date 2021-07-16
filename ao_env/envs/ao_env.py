@@ -53,9 +53,20 @@ class AdaptiveOptics(gym.Env):
         self.sim = soapy.Sim(self.conf_file)
         self.sim.aoinit()
         self.sim.makeIMat()
-        self.step(self.expert())
+
+        state = []
+        for i in range(3):
+            expert_value = self.expert()
+            loopFrame(self.sim, expert_value)
+            img = self.sim.sciImgs[0].copy()
+            img = ((img - np.min(img)) / (np.max(img) - np.min(img))) * 255
+            img = img.astype(np.uint8)
+            img = img.reshape(1, 128, 128)
+            state.append(img)
         self.pre_expert_value = self.expert()
-        self.step(self.pre_expert_value)
+
+        return np.vstack(state).T
+
 
     def expert(self):
         if self.sim.config.sim.nDM:
@@ -64,14 +75,14 @@ class AdaptiveOptics(gym.Env):
         return commands
 
     def step(self, action):
+        loopFrame(self.sim, self.pre_expert_value)
         expert_value = self.expert()
-
-        loopFrame(self.sim,expert_value)
         img = self.sim.sciImgs[0].copy()
         next_state = ((img - np.min(img)) / (np.max(img) - np.min(img)) )* 255
         next_state = next_state.astype(np.uint8)
         x = next_state.reshape(1, 128, 128)
         self.mem_img.append(x)
+
         state = self.mem_img[:3]
         self.mem_img = self.mem_img[1:]
 
