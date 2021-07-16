@@ -41,12 +41,13 @@ class AdaptiveOptics(gym.Env):
         with open(self.conf_file, 'r') as stream:
             self.data_loaded = yaml.safe_load(stream)
         self.__counter = 0
+
         self.action_space = spaces.Box(-2, 2, shape=(32,))
         self.observation_space = spaces.Box(0, 255, shape=(128, 128,3), dtype=np.uint8)
         self._initao()
 
     def _initao(self):
-        self.data_loaded['Atmosphere']['windDirs'] = np.random.randint(0, 180, 4).tolist()
+        #self.data_loaded['Atmosphere']['windDirs'] = np.random.randint(0, 180, 4).tolist()
         self.sim = soapy.Sim(self.conf_file)
         self.sim.aoinit()
         self.sim.makeIMat()
@@ -62,17 +63,15 @@ class AdaptiveOptics(gym.Env):
 
     def step(self, action):
         loopFrame(self.sim, action)
-        next_state = self.sim.sciImgs[0].copy() / (np.max(self.sim.sciImgs[0])) * 255
+        img = self.sim.sciImgs[0].copy()
+        next_state = ((img - np.min(img)) / (np.max(img) - np.min(img)) )* 255
         next_state = next_state.astype(np.uint8)
         reward = np.sum(next_state ** 2)/np.sum(next_state) ** 2
-        reward*=10000
+        #reward*=1000
         #reward = reward
         x = next_state.reshape(1, 128, 128)
         self.__counter += 1
-        if self.__counter == 100:
-            return np.vstack([x, x, x]).T, reward, True, {}
-        else:
-            return np.vstack([x, x, x]).T, reward, False, {}
+        return np.vstack([x, x, x]).T, reward, False, {}
 
 
 
