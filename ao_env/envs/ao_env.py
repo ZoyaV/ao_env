@@ -93,7 +93,7 @@ class AdaptiveOptics(gym.Env):
 
         self.__counter += 1
         self.pre_expert_value = expert_value
-        return np.vstack(state).T, reward, False, {}
+        return np.vstack(state).T, reward.astype(np.float32), False, {}
 
 
 
