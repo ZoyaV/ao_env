@@ -45,6 +45,7 @@ class AdaptiveOptics(gym.Env):
         self.expert_commands = []
         self.action_space = spaces.Box(-2, 2, shape=(32,))
         self.observation_space = spaces.Box(0, 255, shape=(128, 128,3), dtype=np.uint8)
+        self.pre_expert_value = None
         self._initao()
 
     def _initao(self):
@@ -52,7 +53,6 @@ class AdaptiveOptics(gym.Env):
         self.sim = soapy.Sim(self.conf_file)
         self.sim.aoinit()
         self.sim.makeIMat()
-
         self.step(self.expert())
         self.pre_expert_value = self.expert()
         self.step(self.pre_expert_value)
