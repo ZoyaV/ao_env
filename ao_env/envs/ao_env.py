@@ -48,8 +48,8 @@ class AdaptiveOptics(gym.Env):
         self.action_space = spaces.Box(-2, 2, shape=(32,))
         self.observation_space = spaces.Box(0, 255, shape=(128, 128,3), dtype=np.uint8)
         self.pre_expert_value = None
-        self.max_reward = 0
-        self.min_reward = 5
+        self.max_reward = 5
+        self.min_reward = 0
         self._initao()
 
     def _initao(self):
