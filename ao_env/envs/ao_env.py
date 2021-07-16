@@ -97,7 +97,7 @@ class AdaptiveOptics(gym.Env):
         self.reward = reward
         if self.reward > self.max_reward:
             self.max_reward = self.reward
-        self.reward = (self.reward - self.min_reward)/(self.min_reward - self.max_reward)
+        self.reward = (self.reward - self.min_reward)/(self.max_reward - self.min_reward)
 
 
         self.__counter += 1
