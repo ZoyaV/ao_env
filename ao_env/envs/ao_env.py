@@ -75,7 +75,7 @@ class AdaptiveOptics(gym.Env):
         return commands
 
     def step(self, action):
-        loopFrame(self.sim, self.pre_expert_value)
+        loopFrame(self.sim, action)
         expert_value = self.expert()
         img = self.sim.sciImgs[0].copy()
         next_state = ((img - np.min(img)) / (np.max(img) - np.min(img)) )* 255
