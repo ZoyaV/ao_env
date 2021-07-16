@@ -48,6 +48,8 @@ class AdaptiveOptics(gym.Env):
         self.action_space = spaces.Box(-2, 2, shape=(32,))
         self.observation_space = spaces.Box(0, 255, shape=(128, 128,3), dtype=np.uint8)
         self.pre_expert_value = None
+        self.max_reward = 0
+        self.min_reward = -5
         self._initao()
 
     def _initao(self):
@@ -94,6 +96,10 @@ class AdaptiveOptics(gym.Env):
         reward = np.mean((action - self.pre_expert_value)**2)
         reward = - reward
         self.reward = reward
+        if self.reward < self.min_reward:
+            self.min_reward = self.reward
+        self.reward = (self.reward - self.min_reward)/(self.min_reward - self.max_reward)
+
 
         self.__counter += 1
         self.pre_expert_value = expert_value
