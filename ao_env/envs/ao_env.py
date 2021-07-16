@@ -78,6 +78,11 @@ class AdaptiveOptics(gym.Env):
         commands = self.sim.buffer.delay(self.sim.dmCommands, self.sim.config.sim.loopDelay)
         return commands
 
+    def imitation(self, action):
+        loopFrame(self.sim, action)
+        img = self.sim.sciImgs[0].copy()
+        return img
+    
     def step(self, action):
         loopFrame(self.sim, self.pre_expert_value)
         expert_value = self.expert()
@@ -102,7 +107,7 @@ class AdaptiveOptics(gym.Env):
 
         self.__counter += 1
         self.pre_expert_value = expert_value
-        return np.vstack(state).T, 1-reward.astype(np.float32), False, {}
+        return np.vstack(state).T, self.reward.astype(np.float32), False, {}
 
 
 
