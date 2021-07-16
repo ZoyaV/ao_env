@@ -88,7 +88,7 @@ class AdaptiveOptics(gym.Env):
 
         if  isinstance(self.pre_expert_value, type(None)):
             self.pre_expert_value = expert_value
-        reward = (action - self.pre_expert_value)**2
+        reward = -np.mean((action - self.pre_expert_value)**2)
         reward = - reward
 
         self.__counter += 1
