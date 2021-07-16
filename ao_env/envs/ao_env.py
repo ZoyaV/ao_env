@@ -68,6 +68,9 @@ class AdaptiveOptics(gym.Env):
         next_state = next_state.astype(np.uint8)
         reward = np.sum(next_state ** 2)/np.sum(next_state) ** 2
         reward*=10000
+
+        if reward > 0.05:
+            reward*=2
         #reward = reward
         x = next_state.reshape(128, 128, 1)
         self.__counter += 1
