@@ -73,7 +73,7 @@ class AdaptiveOptics(gym.Env):
         x = next_state.reshape(1, 128, 128)
         self.mem_img.append(x)
         state = self.mem_img[:3]
-        self.mem_img = next_state[-3:]
+        self.mem_img = self.mem_img[1:]
 
         if  self.pre_expert_value == None:
             self.pre_expert_value = expert_value
