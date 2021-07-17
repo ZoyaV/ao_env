@@ -48,6 +48,7 @@ class AdaptiveOptics(gym.Env):
         self.action_space = spaces.Box(-2, 2, shape=(32,))
         self.observation_space = spaces.Box(0, 255, shape=(128, 128,3), dtype=np.uint8)
         self.pre_expert_value = None
+        self.expert_value = None
         self.max_reward = 5
         self.min_reward = 0
         self.mean_reward = 0
@@ -72,65 +73,55 @@ class AdaptiveOptics(gym.Env):
 
         return np.vstack(self.mem_img).T
 
-
     def expert(self):
         if self.sim.config.sim.nDM:
             self.sim.dmCommands[:] = self.sim.recon.reconstruct(self.sim.slopes)
         commands = self.sim.buffer.delay(self.sim.dmCommands, self.sim.config.sim.loopDelay)
         return commands
 
+    def reward_rmse(self, action):
+        if isinstance(self.pre_expert_value, type(None)):
+            self.pre_expert_value = self.expert_value
+        reward = (action - self.pre_expert_value)**2
+        reward = np.mean(reward)
+        reward = np.sqrt(reward)
+        return 1/np.sqrt(np.exp(reward))
+
     def imitation(self, action):
         loopFrame(self.sim, action)
-        expert_value = self.expert()
+        self.expert_value = self.expert()
+        # Cчитаем next_state
         img = self.sim.sciImgs[0].copy()
         next_state = ((img - np.min(img)) / (np.max(img) - np.min(img))) * 255
         next_state = next_state.astype(np.uint8)
         x = next_state.reshape(1, 128, 128)
         self.mem_img.append(x)
-
         state = self.mem_img[:3]
         self.mem_img = self.mem_img[1:]
-
-        if isinstance(self.pre_expert_value, type(None)):
-            self.pre_expert_value = expert_value
+        # считаем отклик
         self.last_reward = self.reward
-        mse = np.mean((action - self.pre_expert_value) ** 2)
-        norm_mse = (mse - self.min_reward) / (self.max_reward - self.min_reward)
-        self.reward = 1-norm_mse
-        self.__counter += 1
-        self.mean_reward += self.reward
-        self.mean_reward /= self.__counter
-        
-        self.pre_expert_value = expert_value
+        self.reward = self.reward_rmse(action)
+        # меняем значение действий от эксперта
+        self.pre_expert_value = self.expert_value
         return np.vstack(state).T, self.reward.astype(np.float32), False, {}
 
     def step(self, action):
         loopFrame(self.sim, self.pre_expert_value)
-        expert_value = self.expert()
+        self.expert_value = self.expert()
+        #Cчитаем next_state
         img = self.sim.sciImgs[0].copy()
         next_state = ((img - np.min(img)) / (np.max(img) - np.min(img)) )* 255
         next_state = next_state.astype(np.uint8)
         x = next_state.reshape(1, 128, 128)
         self.mem_img.append(x)
-
         state = self.mem_img[:3]
         self.mem_img = self.mem_img[1:]
-
-        if  isinstance(self.pre_expert_value, type(None)):
-            self.pre_expert_value = expert_value
+        #считаем отклик
         self.last_reward = self.reward
-        mse = np.mean((action - self.pre_expert_value)**2)
-        self.reward = 1-(mse/5)
-        #self.reward = (mse - self.min_reward)/(self.max_reward - self.min_reward)
-
-        self.__counter += 1
-        # self.mean_reward += self.reward
-        # self.mean_reward /= self.__counter
-
-        self.pre_expert_value = expert_value
+        self.reward = self.reward_rmse(action)
+        #меняем значение действий от эксперта
+        self.pre_expert_value = self.expert_value
         return np.vstack(state).T, self.reward.astype(np.float32), False, {}
-
-
 
     def reset(self):
         state = self._initao()
