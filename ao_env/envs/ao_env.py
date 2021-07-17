@@ -101,7 +101,7 @@ class AdaptiveOptics(gym.Env):
         state = self.mem_img[:3]
         self.mem_img = self.mem_img[1:]
 
-        return state
+        return np.vstack(state).T
 
     def step(self, action):
         loopFrame(self.sim, self.pre_expert_value)
