@@ -45,7 +45,7 @@ class AdaptiveOptics(gym.Env):
         self.reward = 0
         self.mem_img = []
         self.expert_commands = []
-        self.action_space = spaces.Box(-2, 2, shape=(32,))
+        self.action_space = spaces.Box(-20, 20, shape=(32,))
         self.observation_space = spaces.Box(0, 255, shape=(128, 128,3), dtype=np.uint8)
         self.pre_expert_value = None
         self.expert_value = None
