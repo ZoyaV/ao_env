@@ -80,9 +80,29 @@ class AdaptiveOptics(gym.Env):
 
     def imitation(self, action):
         loopFrame(self.sim, action)
+        expert_value = self.expert()
         img = self.sim.sciImgs[0].copy()
-        return img
-    
+        next_state = ((img - np.min(img)) / (np.max(img) - np.min(img))) * 255
+        next_state = next_state.astype(np.uint8)
+        x = next_state.reshape(1, 128, 128)
+        self.mem_img.append(x)
+
+        state = self.mem_img[:3]
+        self.mem_img = self.mem_img[1:]
+
+        if isinstance(self.pre_expert_value, type(None)):
+            self.pre_expert_value = expert_value
+        self.last_reward = self.reward
+        reward = np.mean((action - self.pre_expert_value) ** 2)
+        self.reward = reward
+        if self.reward > self.max_reward:
+            self.max_reward = self.reward
+        self.reward = (self.reward - self.min_reward) / (self.max_reward - self.min_reward)
+
+        self.__counter += 1
+        self.pre_expert_value = expert_value
+        return np.vstack(state).T, self.reward.astype(np.float32), False, {}
+
     def step(self, action):
         loopFrame(self.sim, self.pre_expert_value)
         expert_value = self.expert()
