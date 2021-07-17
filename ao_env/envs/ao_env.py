@@ -120,7 +120,7 @@ class AdaptiveOptics(gym.Env):
             self.pre_expert_value = expert_value
         self.last_reward = self.reward
         mse = np.mean((action - self.pre_expert_value)**2)
-        self.reward = -mse
+        self.reward = 1-(mse/5)
         #self.reward = (mse - self.min_reward)/(self.max_reward - self.min_reward)
 
         self.__counter += 1
