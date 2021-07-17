@@ -50,6 +50,7 @@ class AdaptiveOptics(gym.Env):
         self.pre_expert_value = None
         self.max_reward = 5
         self.min_reward = 0
+        self.mean_reward = 0
         self._initao()
 
     def _initao(self):
@@ -100,6 +101,9 @@ class AdaptiveOptics(gym.Env):
         self.reward = (self.reward - self.min_reward) / (self.max_reward - self.min_reward)
 
         self.__counter += 1
+        self.mean_reward += reward
+        self.mean_reward /= self.__counter
+        
         self.pre_expert_value = expert_value
         return np.vstack(state).T, self.reward.astype(np.float32), False, {}
 
@@ -124,8 +128,10 @@ class AdaptiveOptics(gym.Env):
             self.max_reward = self.reward
         self.reward = (self.reward - self.min_reward)/(self.max_reward - self.min_reward)
 
-
         self.__counter += 1
+        self.mean_reward += reward
+        self.mean_reward /= self.__counter
+
         self.pre_expert_value = expert_value
         return np.vstack(state).T, self.reward.astype(np.float32), False, {}
 
