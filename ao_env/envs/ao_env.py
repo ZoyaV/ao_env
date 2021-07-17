@@ -120,11 +120,12 @@ class AdaptiveOptics(gym.Env):
             self.pre_expert_value = expert_value
         self.last_reward = self.reward
         mse = np.mean((action - self.pre_expert_value)**2)
-        self.reward = (mse - self.min_reward)/(self.max_reward - self.min_reward)
+        self.reward = -mse
+        #self.reward = (mse - self.min_reward)/(self.max_reward - self.min_reward)
 
         self.__counter += 1
-        self.mean_reward += self.reward
-        self.mean_reward /= self.__counter
+        # self.mean_reward += self.reward
+        # self.mean_reward /= self.__counter
 
         self.pre_expert_value = expert_value
         return np.vstack(state).T, self.reward.astype(np.float32), False, {}
