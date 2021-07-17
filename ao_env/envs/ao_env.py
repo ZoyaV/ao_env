@@ -87,10 +87,12 @@ class AdaptiveOptics(gym.Env):
         reward = np.sqrt(reward)
         return 1/np.sqrt(np.exp(reward))
 
+    def normalize_action(self, action):
+        pass
+
     def imitation(self, action):
         loopFrame(self.sim, action)
-        self.expert_value = self.expert()
-        # Cчитаем next_state
+
         img = self.sim.sciImgs[0].copy()
         next_state = ((img - np.min(img)) / (np.max(img) - np.min(img))) * 255
         next_state = next_state.astype(np.uint8)
@@ -98,12 +100,8 @@ class AdaptiveOptics(gym.Env):
         self.mem_img.append(x)
         state = self.mem_img[:3]
         self.mem_img = self.mem_img[1:]
-        # считаем отклик
-        self.last_reward = self.reward
-        self.reward = self.reward_rmse(action)
-        # меняем значение действий от эксперта
-        self.pre_expert_value = self.expert_value
-        return np.vstack(state).T, self.reward.astype(np.float32), False, {}
+
+        return state
 
     def step(self, action):
         loopFrame(self.sim, self.pre_expert_value)
