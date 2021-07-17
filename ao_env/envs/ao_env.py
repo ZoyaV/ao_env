@@ -105,7 +105,7 @@ class AdaptiveOptics(gym.Env):
         self.mean_reward /= self.__counter
         
         self.pre_expert_value = expert_value
-        return np.vstack(state).T, self.reward.astype(np.float32), False, {}
+        return np.vstack(state).T, -self.reward.astype(np.float32), False, {}
 
     def step(self, action):
         loopFrame(self.sim, self.pre_expert_value)
