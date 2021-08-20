@@ -6,6 +6,7 @@ register(
 )
 
 register(
-    id='ao-v0-bright',
+    id='aoebright-v0',
     entry_point='ao_env.envs:AdaptiveOpticsBright',
 )
+
