@@ -45,12 +45,13 @@ class AdaptiveOpticsBright(gym.Env):
         with open(self.conf_file, 'r') as stream:
             self.data_loaded = yaml.safe_load(stream)
         self.__counter = 0
+        self.scicam_size = 128
         self.last_reward = -1000
         self.reward = 0
         self.mem_img = []
         self.expert_commands = []
         self.action_space = spaces.Box(-50, 50, shape=(32,))
-        self.observation_space = spaces.Box(0, 255, shape=(64, 64, 3), dtype=np.uint8)
+        self.observation_space = spaces.Box(0, 255, shape=(self.scicam_size, self.scicam_size, 3), dtype=np.uint8)
         self.pre_expert_value = None
         self.expert_value = None
         self.max_reward = 5
@@ -77,7 +78,7 @@ class AdaptiveOpticsBright(gym.Env):
             img = self.sim.sciImgs[0].copy()
             img = ((img - np.min(img)) / (np.max(img) - np.min(img))) * 255
             img = img.astype(np.uint8)
-            img = img.reshape(1, 64, 64)
+            img = img.reshape(1, self.scicam_size, self.scicam_size)
             self.mem_img.append(img)
         self.pre_expert_value = self.expert()
 
@@ -94,7 +95,7 @@ class AdaptiveOpticsBright(gym.Env):
         # reward = (reward-0.3)/(0.6 - 0.3)
         next_state = ((img - np.min(img)) / (np.max(img) - np.min(img))) * 255
         next_state = next_state.astype(np.uint8)
-        x = next_state.reshape(1, 64, 64)
+        x = next_state.reshape(1, self.scicam_size, self.scicam_size)
         self.mem_img.append(x)
         state = self.mem_img[:3]
         self.mem_img = self.mem_img[1:]
