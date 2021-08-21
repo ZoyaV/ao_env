@@ -100,7 +100,8 @@ class AdaptiveOpticsBright(gym.Env):
         state = self.mem_img[:3]
         self.mem_img = self.mem_img[1:]
 
-        loopFrame(self.sim, action)
+        for i in range(10):
+            loopFrame(self.sim, action)
 
         return np.vstack(state).T, reward.astype(np.float32), False, {}
 
