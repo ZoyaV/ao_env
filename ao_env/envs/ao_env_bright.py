@@ -72,6 +72,8 @@ class AdaptiveOpticsBright(gym.Env):
         self.sim.makeIMat()
 
         self.mem_img = []
+        for i in range(300):
+           loopFrame(self.sim, self.expert())
         for i in range(3):
             expert_value = self.expert()
             loopFrame(self.sim, expert_value)
@@ -96,12 +98,12 @@ class AdaptiveOpticsBright(gym.Env):
         next_state = ((img - np.min(img)) / (np.max(img) - np.min(img))) * 255
         next_state = next_state.astype(np.uint8)
         x = next_state.reshape(1, self.scicam_size, self.scicam_size)
-        self.mem_img.append(x)
+        self.m#for i in range(100):
+         #   loopFrame(self.sim, self.expert())em_img.append(x)
         state = self.mem_img[:3]
         self.mem_img = self.mem_img[1:]
 
-        for i in range(100):
-            loopFrame(self.sim, self.expert())
+
 
         return np.vstack(state).T, reward.astype(np.float32), False, {}
 
