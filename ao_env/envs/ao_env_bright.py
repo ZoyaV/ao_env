@@ -51,7 +51,7 @@ class AdaptiveOpticsBright(gym.Env):
         self.mem_img = []
         self.expert_commands = []
         self.action_space = spaces.Box(-50, 50, shape=(32,))
-        self.observation_space = spaces.Box(0, 255, shape=(self.scicam_size, self.scicam_size, 3), dtype=np.uint8)
+        self.observation_space = spaces.Box(0, 255, shape=(self.scicam_size, self.scicam_size), dtype=np.uint8)
         self.pre_expert_value = None
         self.expert_value = None
         self.max_reward = 5
@@ -73,18 +73,16 @@ class AdaptiveOpticsBright(gym.Env):
 
        # for i in range(300):
         #   loopFrame(self.sim, self.expert())
-        self.mem_img = []
-        for i in range(3):
-            expert_value = self.expert()
-            loopFrame(self.sim, expert_value)
-            img = self.sim.sciImgs[0].copy()
-            img = ((img - np.min(img)) / (np.max(img) - np.min(img))) * 255
-            img = img.astype(np.uint8)
-            img = img.reshape(1, self.scicam_size, self.scicam_size)
-            self.mem_img.append(img)
+
+        expert_value = self.expert()
+        loopFrame(self.sim, expert_value)
+        img = self.sim.sciImgs[0].copy()
+        img = ((img - np.min(img)) / (np.max(img) - np.min(img))) * 255
+        img = img.astype(np.uint8)
+
         self.pre_expert_value = self.expert()
 
-        return np.vstack(self.mem_img).T
+        return img
 
     def calc_brightness(self, img):
         return (np.sum(img ** 2) / (np.sum(img)) ** 2) * 100
@@ -94,18 +92,11 @@ class AdaptiveOpticsBright(gym.Env):
 
         img = self.sim.sciImgs[0].copy()
         reward = self.calc_brightness(img) - 0.05
-        # reward = (reward-0.3)/(0.6 - 0.3)
+
         next_state = ((img - np.min(img)) / (np.max(img) - np.min(img))) * 255
         next_state = next_state.astype(np.uint8)
-        x = next_state.reshape(1, self.scicam_size, self.scicam_size)
-        self.mem_img.append(x)
-        state = self.mem_img[:3]
-        self.mem_img = self.mem_img[1:]
 
-       # for i in range(3):
-           # loopFrame(self.sim, self.expert())
-
-        return np.vstack(state).T, reward.astype(np.float32), False, {}
+        return next_state, reward.astype(np.float32), False, {}
 
     def reset(self):
         state = self._initao()
