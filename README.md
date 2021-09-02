@@ -1,7 +1,7 @@
-# ao_env
+# Simple GYM environment for adaptive optics - ao_env
 
 ### About project
-This is a simple AO gym-environment based on the soapy library.
+This is a simple AO gym-environment based on the soapy library (https://github.com/AOtools/soapy).
 
 The library includes two environments with different metrics for evaluating agent behavior.
 
