@@ -73,6 +73,17 @@ class AdaptiveOptics(gym.Env):
 
         return np.vstack(self.mem_img).T
 
+    def norm_expert(self):
+        action = self.expert()
+        act_k = (self.action_space.high - self.action_space.low) / 2.
+        act_b = (self.action_space.high + self.action_space.low) / 2.
+        return act_k * action + act_b
+
+    def reverse_expert(self,action):
+        act_k_inv = 2./(self.action_space.high - self.action_space.low)
+        act_b = (self.action_space.high + self.action_space.low)/ 2.
+        return act_k_inv * (action - act_b)
+
     def expert(self):
         if self.sim.config.sim.nDM:
             self.sim.dmCommands[:] = self.sim.recon.reconstruct(self.sim.slopes)
