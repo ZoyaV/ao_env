@@ -94,6 +94,7 @@ class AdaptiveOptics(gym.Env):
         print(self.pre_expert_value)
         if isinstance(self.pre_expert_value, type(None)):
             self.pre_expert_value = self.expert_value
+        print(action)
         action = self.reverse_expert(action)
         print(action)
         print(self.pre_expert_value)
