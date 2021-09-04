@@ -95,9 +95,9 @@ class AdaptiveOptics(gym.Env):
             self.pre_expert_value = self.expert_value
         expert_value = self.reverse_expert(self.pre_expert_value)
         reward = (action - expert_value)**2
+        reward = np.mean(reward)
         if reward == 0:
             return 1
-        reward = np.mean(reward)
         reward = np.sqrt(reward)
         return 1/np.sqrt(np.exp(reward))
 
