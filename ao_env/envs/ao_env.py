@@ -93,8 +93,8 @@ class AdaptiveOptics(gym.Env):
     def reward_rmse(self, action):
         if isinstance(self.pre_expert_value, type(None)):
             self.pre_expert_value = self.expert_value
-        expert_value = self.reverse_expert(self.pre_expert_value)
-        reward = (action - expert_value)**2
+        action = self.reverse_action(action)
+        reward = (action -  self.pre_expert_value)**2
         reward = np.mean(reward)
         if reward == 0:
             return 1
