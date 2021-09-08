@@ -70,7 +70,6 @@ class AdaptiveOpticsBright(gym.Env):
         act_b = (self.action_space.high + self.action_space.low)/ 2.
         return act_k_inv * (action - act_b)
 
-
     def expert(self):
         if self.sim.config.sim.nDM:
             self.sim.dmCommands[:] = self.sim.recon.reconstruct(self.sim.slopes)
