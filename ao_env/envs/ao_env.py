@@ -112,7 +112,7 @@ class AdaptiveOptics(gym.Env):
         if reward == 0:
             return 1
         reward = np.sqrt(reward)
-        return 1/np.sqrt(np.exp(reward))
+        return float(1/np.sqrt(np.exp(reward)))
 
     def normalize_action(self, action):
         pass
@@ -147,7 +147,7 @@ class AdaptiveOptics(gym.Env):
         #меняем значение действий от эксперта
         self.pre_expert_value = self.expert_value
         done = self.check_done(np.vstack(state).T)
-        return np.vstack(state).T, self.reward.astype(np.float32), done, {}
+        return np.vstack(state).T, self.reward, done, {}
 
     def reset(self):
         state = self._initao()
