@@ -77,7 +77,7 @@ class AdaptiveOptics(gym.Env):
         return (np.sum(img ** 2) / (np.sum(img)) ** 2) * 100
 
     def check_done(self, img):
-        if self.calc_brightness(img) > 0.13:
+        if self.calc_brightness(img) > 0.005:
             return True
         else:
             return False
