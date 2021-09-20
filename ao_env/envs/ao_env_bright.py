@@ -76,6 +76,12 @@ class AdaptiveOpticsBright(gym.Env):
         commands = self.sim.buffer.delay(self.sim.dmCommands, self.sim.config.sim.loopDelay)
         return commands
 
+    def check_done(self, reward):
+        if reward > 0.13:
+            return True
+        else:
+            return False
+
     def _initao(self):
         # self.data_loaded['Atmosphere']['windDirs'] = np.random.randint(0, 180, 4).tolist()
         self.sim = soapy.Sim(self.conf_file)
@@ -115,8 +121,8 @@ class AdaptiveOpticsBright(gym.Env):
 
         for i in range(0):
             loopFrame(self.sim, self.expert())
-
-        return np.vstack(state).T, reward.astype(np.float32), False, {}
+        done = self.check_done(reward)
+        return np.vstack(state).T, reward.astype(np.float32), done, {}
 
     def reset(self):
         state = self._initao()
