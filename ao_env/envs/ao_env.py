@@ -45,7 +45,7 @@ class AdaptiveOptics(gym.Env):
         self.reward = 0
         self.mem_img = []
         self.expert_commands = []
-        self.action_space = spaces.Box(-50, 50, shape=(32,))
+        self.action_space = spaces.Box(-2, 2, shape=(32,))
         self.observation_space = spaces.Box(0, 255, shape=(128, 128,3), dtype=np.uint8)
         self.pre_expert_value = None
         self.expert_value = None
@@ -72,6 +72,15 @@ class AdaptiveOptics(gym.Env):
         self.pre_expert_value = self.expert()
 
         return np.vstack(self.mem_img).T
+
+    def calc_brightness(self, img):
+        return (np.sum(img ** 2) / (np.sum(img)) ** 2) * 100
+
+    def check_done(self, img):
+        if self.calc_brightness(img) > 0.13:
+            return True
+        else:
+            return False
 
     def norm_expert(self):
         action = self.expert()
@@ -137,7 +146,8 @@ class AdaptiveOptics(gym.Env):
         self.reward = self.reward_rmse(action)
         #меняем значение действий от эксперта
         self.pre_expert_value = self.expert_value
-        return np.vstack(state).T, self.reward.astype(np.float32), False, {}
+        done = self.check_done(np.vstack(state).T)
+        return np.vstack(state).T, self.reward.astype(np.float32), done, {}
 
     def reset(self):
         state = self._initao()
