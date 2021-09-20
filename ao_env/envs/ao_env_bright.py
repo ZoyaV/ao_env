@@ -104,7 +104,7 @@ class AdaptiveOpticsBright(gym.Env):
         return np.vstack(self.mem_img).T
 
     def calc_brightness(self, img):
-        return (np.sum(img ** 2) / (np.sum(img)) ** 2) * 100
+        return float((np.sum(img ** 2) / (np.sum(img)) ** 2) * 100)
 
     def step(self, action):
         loopFrame(self.sim, action)
@@ -122,7 +122,7 @@ class AdaptiveOpticsBright(gym.Env):
         for i in range(0):
             loopFrame(self.sim, self.expert())
         done = self.check_done(reward)
-        return np.vstack(state).T, reward.astype(np.float32), done, {}
+        return np.vstack(state).T, reward, done, {}
 
     def reset(self):
         state = self._initao()
