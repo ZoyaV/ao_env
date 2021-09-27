@@ -147,7 +147,7 @@ class AdaptiveOptics(gym.Env):
         #меняем значение действий от эксперта
         self.pre_expert_value = self.expert_value
         done = self.check_done(np.vstack(state).T)
-        return np.vstack(state).T, self.reward, done, {}
+        return np.vstack(state).T, self.reward, False, {}
 
     def reset(self):
         state = self._initao()
