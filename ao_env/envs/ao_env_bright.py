@@ -114,9 +114,9 @@ class AdaptiveOpticsBright(gym.Env):
         # reward = (reward-0.3)/(0.6 - 0.3)
         next_state = ((img - np.min(img)) / (np.max(img) - np.min(img)))*255
         # next_state = next_state.astype(np.uint8)
-        x = next_state.reshape(1, self.scicam_size, self.scicam_size)
+        x = next_state.reshape(1, self.scicam_size, self.scicam_size).astype(np.uint8)
         self.mem_img.append(x)
-        state = self.mem_img[:3].astype(np.uint8)
+        state = self.mem_img[:3]
         self.mem_img = self.mem_img[1:]
 
         for i in range(0):
