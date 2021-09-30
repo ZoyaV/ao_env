@@ -77,7 +77,7 @@ class AdaptiveOpticsBright(gym.Env):
         return commands
 
     def check_done(self, reward):
-        if reward > 0.13 or reward < 0.0075:
+        if reward > 0.13 or reward < 0.0065:
             return True
         else:
             return False
