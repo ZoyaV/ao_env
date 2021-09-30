@@ -54,7 +54,7 @@ DM:
   1:
     type: Zernike
     closed: True
-    nxActuators: 10
+    nxActuators: 30
     iMatValue: 500
     
 
