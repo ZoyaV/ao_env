@@ -51,7 +51,7 @@ class AdaptiveOpticsBright(gym.Env):
         self.mem_img = []
         self.expert_commands = []
         self.action_space = spaces.Box(-1, 1, shape=(32,))
-        self.observation_space = spaces.Box(0, 255, shape=(self.scicam_size, self.scicam_size, 3),  dtype=np.uint8)
+        self.observation_space = spaces.Box(0, 255, shape=(3,self.scicam_size, self.scicam_size),  dtype=np.uint8)
         self.pre_expert_value = None
         self.expert_value = None
         self.max_reward = 5
@@ -101,7 +101,7 @@ class AdaptiveOpticsBright(gym.Env):
             self.mem_img.append(img)
         self.pre_expert_value = self.expert()
 
-        return np.vstack(self.mem_img).T
+        return np.vstack(self.mem_img)
 
     def calc_brightness(self, img):
         return ((np.sum(img ** 2) / (np.sum(img)) ** 2) * 100)
@@ -122,7 +122,7 @@ class AdaptiveOpticsBright(gym.Env):
         for i in range(0):
             loopFrame(self.sim, self.expert())
         done = self.check_done(reward)
-        return np.vstack(state).T, reward, done, {}
+        return np.vstack(state), reward, done, {}
 
     def reset(self):
         state = self._initao()
