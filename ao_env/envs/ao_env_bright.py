@@ -77,7 +77,7 @@ class AdaptiveOpticsBright(gym.Env):
         return commands
 
     def check_done(self, reward):
-        if reward > 0.13 or reward < -0.0035:
+        if  reward < -0.0035:
             return True
         else:
             return False
@@ -88,8 +88,8 @@ class AdaptiveOpticsBright(gym.Env):
         self.sim.aoinit()
         self.sim.makeIMat()
 
-       # for i in range(300):
-        #   loopFrame(self.sim, self.expert())
+        for i in range(100):
+          loopFrame(self.sim, self.expert())
         self.mem_img = []
         for i in range(3):
             expert_value = self.expert()
