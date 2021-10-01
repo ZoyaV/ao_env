@@ -51,7 +51,7 @@ class AdaptiveOpticsBright(gym.Env):
         self.mem_img = []
         self.expert_commands = []
         self.action_space = spaces.Box(-3, 3, shape=(32,))
-        self.observation_space = spaces.Box(0, 255, shape=(3,self.scicam_size, self.scicam_size),  dtype=np.float)
+        self.observation_space = spaces.Box(0, 255, shape=(3,self.scicam_size, self.scicam_size),  dtype=np.uint8)
         self.pre_expert_value = None
         self.expert_value = None
         self.max_reward = 5
