@@ -129,7 +129,7 @@ class AdaptiveOpticsBright(gym.Env):
         img = self.sim.sciImgs[0].copy()
         reward_1 = self.calc_brightness(img) * 2
         self.last_bright_reward = reward_1
-        reward_2 = self.reward_rmse(action)
+        reward_2 = self.reward_rmse(action) * 0.5
         self.last_rmse_reward = reward_2
 
         reward = reward_1+reward_2
