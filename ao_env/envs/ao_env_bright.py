@@ -79,7 +79,7 @@ class AdaptiveOpticsBright(gym.Env):
         return commands
 
     def check_done(self, reward):
-        if  reward < 0.27:
+        if  reward < 0:
             return True
         else:
             return False
@@ -127,12 +127,12 @@ class AdaptiveOpticsBright(gym.Env):
         loopFrame(self.sim, action)
 
         img = self.sim.sciImgs[0].copy()
-        reward_1 = self.calc_brightness(img) * 2
-        self.last_bright_reward = reward_1
-        reward_2 = self.reward_rmse(action) * 0.5
-        self.last_rmse_reward = reward_2
+        reward = self.calc_brightness(img) * 2
+        self.last_bright_reward = reward
+        # reward_2 = self.reward_rmse(action) * 0.5
+        # self.last_rmse_reward = reward_2
 
-        reward = reward_1+reward_2
+        # reward = reward_1+reward_2
         # reward = (reward-0.3)/(0.6 - 0.3)
         next_state = ((img - np.min(img)) / (np.max(img) - np.min(img)))*255
         next_state = next_state.astype(np.uint8)
