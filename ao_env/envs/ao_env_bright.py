@@ -90,7 +90,7 @@ class AdaptiveOpticsBright(gym.Env):
         self.sim.aoinit()
         self.sim.makeIMat()
 
-        for i in range(100):
+        for i in range(0):
           loopFrame(self.sim, self.expert())
         self.mem_img = []
         for i in range(3):
