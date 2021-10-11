@@ -54,6 +54,8 @@ class AdaptiveOpticsBright(gym.Env):
         self.observation_space = spaces.Box(0, 255, shape=(3,self.scicam_size, self.scicam_size),  dtype=np.uint8)
         self.pre_expert_value = None
         self.expert_value = None
+        self.last_rmse_reward = 0
+        self.last_bright_reward = 0
         self.max_reward = 5
         self.min_reward = 0
         self.mean_reward = 0
@@ -77,7 +79,7 @@ class AdaptiveOpticsBright(gym.Env):
         return commands
 
     def check_done(self, reward):
-        if  reward < -0.0075:
+        if  reward < 0.1:
             return True
         else:
             return False
@@ -125,8 +127,10 @@ class AdaptiveOpticsBright(gym.Env):
         loopFrame(self.sim, action)
 
         img = self.sim.sciImgs[0].copy()
-        reward_1 = self.calc_brightness(img) * 5
+        reward_1 = self.calc_brightness(img) * 2
+        self.last_bright_reward = reward_1
         reward_2 = self.reward_rmse(action)
+        self.last_rmse_reward = reward_2
 
         reward = reward_1+reward_2
         # reward = (reward-0.3)/(0.6 - 0.3)
